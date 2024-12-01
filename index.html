@@ -58,8 +58,7 @@
 
     <section class="section" id="introduction">
         <h2>Introduction</h2>
-        <p>Motivating our analysis, we focus on exploring Apple Inc.'s stock data to uncover trends and provide actionable insights. 
-        This project aims to answer key questions about stock price behavior, correlations, and market events' impact.</p>
+        <p>This project explores Apple Inc. (AAPL) stock data, focusing on key questions regarding stock price behavior, correlations, and market events' impact. The analysis aims to provide insights into the relationships between stock prices, volume, and market trends over time.</p>
     </section>
 
     <section class="section" id="data-curation">
@@ -80,20 +79,22 @@ print(df.isnull().sum())  # Precheck, no missing values</code></pre>
         <h2>Exploratory Data Analysis (EDA)</h2>
         <p>Key Observations:</p>
         <ul>
-            <li>Strong positive correlation among price-related features.</li>
-            <li>Negative correlation between price and volume.</li>
-            <li>Mean daily returns fluctuate around zero, with significant drops during notable financial events.</li>
+            <li><strong>Positive Correlation Among Price Metrics:</strong> Open, High, Low, Close, and Adjusted Close prices are all very strongly positively correlated. For example, a high opening price generally corresponds to a high closing price, which makes intuitive sense.</li>
+            <li><strong>Weak Negative Correlation with Volume:</strong> Prices are weakly negatively correlated with volume, indicating that price movements are not directly tied to trading volume. However, high-volume trading days often accompany significant events, such as earnings announcements or market crashes.</li>
+            <li><strong>Daily Returns Analysis:</strong> Daily returns show variability around 0, with significant drops during market downturns, such as the dot-com crash.</li>
         </ul>
-        <p>Example insights from the data:</p>
-        <pre><code>Open, High, Low, Close, Adj Close are all very positively strongly related. This makes intuitive sense...
-        </code></pre>
     </section>
 
     <section class="section" id="analysis">
         <h2>Primary Analysis</h2>
-        <p>To further investigate, a regression model was implemented to predict closing prices based on other features.</p>
-        <p>Code:</p>
-        <pre><code># Example placeholder for regression code</code></pre>
+        <p><strong>Statistical Test on Daily Returns:</strong></p>
+        <p>A one-sample t-test was conducted to determine whether the mean daily return is significantly different from zero.</p>
+        <p><strong>Hypotheses:</strong></p>
+        <ul>
+            <li>H<sub>0</sub>: μ = 0 (Mean daily return is equal to zero.)</li>
+            <li>H<sub>a</sub>: μ ≠ 0 (Mean daily return is not equal to zero.)</li>
+        </ul>
+        <p>Results showed that the p-value was less than 0.05, leading to the rejection of the null hypothesis. This indicates that the mean daily return is significantly different from zero, suggesting consistent stock movement over time. This aligns with Apple stock's historical growth, which has increased tens of thousands of percent since 1980.</p>
     </section>
 
     <section class="section" id="visualizations">
@@ -110,9 +111,11 @@ print(df.isnull().sum())  # Precheck, no missing values</code></pre>
         <h2>Insights & Conclusions</h2>
         <p>From this analysis, key insights include:</p>
         <ul>
-            <li>Stock prices are highly correlated, reflecting market behavior.</li>
-            <li>Daily returns are influenced by significant market events.</li>
+            <li>Stock prices are highly correlated, reflecting the interconnected nature of opening, closing, and intraday prices.</li>
+            <li>Daily returns are significantly different from zero, implying long-term upward momentum in Apple's stock price.</li>
+            <li>High-volume trading days often coincide with market-moving events, reinforcing the importance of context in stock analysis.</li>
         </ul>
+        <p>Overall, this analysis provides actionable insights into the behavior of Apple’s stock over time, supported by statistical evidence and exploratory trends.</p>
     </section>
 </body>
 </html>
