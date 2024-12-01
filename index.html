@@ -1,1 +1,161 @@
-<h1>Hello Varun!</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fall 2024 Data Science Project</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Fall 2024 Data Science Project</h1>
+        <section id="contributions">
+            <h2>Contributions</h2>
+            <ul>
+                <li><strong>Your Name:</strong> Project Ideation, Machine Learning Model Development</li>
+                <li><strong>Collaborator Name:</strong> Data Curation and Preprocessing, Exploratory Analysis</li>
+            </ul>
+        </section>
+    </header>
+    
+    <main>
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>Clearly describe the topic of your analysis and why it matters.</p>
+            <p>Research Questions:</p>
+            <ul>
+                <li>How do housing prices vary across different urban areas, and what features most strongly affect price trends?</li>
+            </ul>
+            <p>Answering these questions provides valuable insights, such as better investment decisions.</p>
+        </section>
+        
+        <section id="data-curation">
+            <h2>Data Curation</h2>
+            <p><strong>Data Sources:</strong> Mention where you obtained your data and describe the nature of your dataset (e.g., size, format, key features).</p>
+            <p><strong>Preprocessing Steps:</strong> Detail the preprocessing efforts you made, such as:</p>
+            <ul>
+                <li>Cleaning missing values or removing outliers.</li>
+                <li>Transformation such as scaling data or applying encoding methods.</li>
+            </ul>
+            <pre><code>import pandas as pd
+# Handling missing values
+data = pd.read_csv('housing.csv')
+data.fillna(method='ffill', inplace=True)</code></pre>
+        </section>
+        
+        <section id="eda">
+            <h2>Exploratory Data Analysis (EDA)</h2>
+            <p>Summary Insights: Discuss key patterns or relationships found during the EDA.</p>
+            <p>Descriptive Stats & Visuals:</p>
+            <ul>
+                <li>Include visualizations and tables with some descriptive statistics to give a snapshot of the data.</li>
+                <li>Example: A histogram showing distribution of house prices or scatterplots to show relationships.</li>
+            </ul>
+        </section>
+        
+        <section id="primary-analysis">
+            <h2>Primary Analysis</h2>
+            <p>ML Technique Selection: Based on the EDA, introduce your choice of machine learning technique and why it's suitable for the problem.</p>
+            <ul>
+                <li>Example: Regression to predict housing prices or Clustering to group similar properties.</li>
+            </ul>
+            <pre><code>from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(X_train, y_train)</code></pre>
+        </section>
+        
+        <section id="visualization">
+            <h2>Visualization of Results</h2>
+            <p>Clear, Informative Charts: Provide plots showing results of the model.</p>
+            <ul>
+                <li>Example: A scatterplot of predicted vs actual values with titles, axes, and legend labeled.</li>
+            </ul>
+        </section>
+        
+        <section id="insights-conclusions">
+            <h2>Insights & Conclusions</h2>
+            <p>Summary of Key Insights: Reflect on whether your findings address the initial questions and discuss the broader implications.</p>
+            <p>Make sure that the insights are easy to understand by an uninformed reader but also valuable for someone with more expertise.</p>
+        </section>
+        
+        <section id="additional-subsections">
+            <h2>Additional Subsections (Optional)</h2>
+            <p>Add subsections as needed to improve navigation and clarity. For instance, include a separate section for limitations or future work to outline areas to explore beyond the current project.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; Fall 2024 Data Science Project</p>
+    </footer>
+</body>
+</html>
+
+/* CSS File: styles.css */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+main {
+    padding: 20px;
+}
+
+section {
+    background-color: #fff;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 8px;
+    overflow: auto;
+}
+
+code {
+    font-family: monospace;
+    color: #d63384;
+}
+
+a {
+    color: #333;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
