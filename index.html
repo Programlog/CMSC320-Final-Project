@@ -126,7 +126,7 @@ print(df.isnull().sum())  # Precheck, no missing values</code></pre>
         </ul>
         <p>The results showed that the p-value was less than our alpha level of 0.05, leading us to reject the null hypothesis. This means that the mean daily return is statistically 
             significantly different from zero. Specifically, the positive returns suggest that Apple stockholders, on average, experience a profit each day. This observation aligns with 
-            Apple's strong historical growth trajectory, supported by its technological leadership, loyal customer base, and consistent innovation since the beginning of the data collection in 1980.</p>
+            Apple's strong historical growth trajectory, is supported by its technological leadership, loyal customer base, and consistent innovation since the beginning of the data collection in 1980.</p>
         <pre><code>_, p_value = stats.ttest_1samp(df['Daily Return'], 0)
 p_value # 0.0036 < .05, reject H0</code></pre>
     </section>
@@ -157,7 +157,7 @@ y_train = []</code></pre>
             </ul>
             <pre><code>X_train, y_train = np.array(X_train), np.array(y_train)
 X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))</code></pre>
-            <p>The <code>X_train</code> and <code>y_train</code> lists are then converted into NumPy arrays. <code>X_train</code> is reshaped to a 3D array, because it will be fed into the LSTM model (samples, timesteps, features).</p>
+            <p>The <code>X_train</code> and <code>y_train</code> lists are then converted into NumPy arrays. <code>X_train</code> is reshaped to a 3D array because it will be fed into the LSTM model (samples, timesteps, features).</p>
             <h3>3. Building and Training the Model</h2>
             <pre><code>model = Sequential()
 model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
@@ -166,7 +166,7 @@ model.add(Dense(units=25))
 model.add(Dense(units=1))</code></pre>
             <p>Here, we create a keras model and add two LSTM layers to the model, with 50 units each. I chose LSTMs here because they work well with sequential data like time series such as this one.</p>
             <pre><code>model.compile(optimizer='adam', loss='mean_squared_error')</code></pre>
-            <p>Make the model for training using the very popular and versatile adam optimizer and mean squared error as the loss function that we learned in class.</p>
+            <p>Make the model for training using the very popular and versatile Adam optimizer and mean squared error as the loss function we learned in class.</p>
             <pre><code>model.fit(X_train, y_train, batch_size=1, epochs=3)</code></pre>
             <p>Trains the model on the training data (<code>X_train</code>, <code>y_train</code>) for 3 epochs. The number of epochs is pretty arbitrary. I chose 3 epochs as it is a balance of accuracy and compute efficiency without overly underfitting or overfitting. With more time, I would fine tune this. On the other hand, batch size is more particular. I chose a batch size of 1 because time series data can change dramatically. Specifically, Apple stock price can have sudden movements based on earnings or company news. Smaller batch sizes allow this model to adapt more quickly to new information. Again, more fine tuning can be done here.</p>
 
@@ -189,7 +189,7 @@ predictions = scaler.inverse_transform(predictions)</code></pre>
 
             <h3>5. Visualization</h2>
             <img src="modelprediction2.png" alt="stock price predictions" width="500" height="325">
-              <p>Finally, lets see the results. Our model is trained on the Apple stock data to predict future Apple stock prices. This visualization of the testing set results, shows the actual stock price over time, alongside our model's predictions. Looking at the graph, it looks like our model was pretty sucessful! When the stock variance was lower, it appears our model peformed better but as it increased, our model consistenyl undershot the actual price. Some potential causes of this could be the fact our model is trained on data from 1980-2014. Not only is the stock market a very different place it was 10-40 years, but also Apple's price was also much lower. This might have been partially solved by the minmaxscaler but perhaps an alternative scaler would be better suited. It would require more testing and finetuning.
+              <p>Finally, let's see the results. Our model is trained on the Apple stock data to predict future Apple stock prices. This visualization of the testing set results, shows the actual stock price over time, alongside our model's predictions. Looking at the graph, it looks like our model was pretty sucessful! When the stock variance was lower, it appears our model peformed better but as it increased, our model consistenyl undershot the actual price. Some potential causes of this could be the fact our model is trained on data from 1980-2014. Not only is the stock market a very different place it was 10-40 years, but also Apple's price was also much lower. This might have been partially solved by the minmaxscaler but perhaps an alternative scaler would be better suited. It would require more testing and finetuning.
     <p>However, the prediction still captured much of the trends pretty accurately. This could be a useful first tool for newbie investors to use to make informed investment decisions.</p>
         </body>
     </section>
@@ -204,7 +204,7 @@ predictions = scaler.inverse_transform(predictions)</code></pre>
             <li><strong>Correlations Between Stock Metrics:</strong> A heatmap illustrating correlations between key stock metrics (Open, High, Low, Close, Volume) provides a visual representation 
                 of how these variables move in relation to one another. For instance, high correlations between opening and closing prices provide evidence of the intra-day trend consistency mentioned earlier.</li>
             <img src="image3.png" alt="correlations between stock metrics" width="400" height="350">
-            <li><strong>Historic Performance of Apple Stock:</strong> The long-term performance chart of Apple stock reveals the broader growth trends and the impact of major market crashes, 
+            <li><strong> Historical Performance of Apple Stock:</strong> The long-term performance chart of Apple stock reveals the broader growth trends and the impact of major market crashes, 
                 such as the 2008 financial crisis or the more recent COVID-19 pandemic. These trends help in understanding Apple's resilience and its recovery trajectory following economic downturns. Zooming out, Apple's stock price growth appears to be exponential.</li>
             <img src="image1.png" alt="impact of market crashes on stock behavior" width="500" height="400">
         </ul>
@@ -220,7 +220,7 @@ predictions = scaler.inverse_transform(predictions)</code></pre>
                 over time. Investors who hold Apple stock for the long term are more likely to experience consistent positive returns, which is supported by the company's growth history and market leadership.</li>
             <li><strong>Impact of External Events:</strong> High-volume trading days often coincide with significant external events, such as new product announcements or macroeconomic news. 
                 Understanding these patterns can help investors anticipate potential price movements during such events and develop better trading strategies based on context-driven analysis.</li>
-            <li><strong>Machine Learning Predictions</strong>Using LSTM based models, I was able to pretty acurately predict stock price. Due to the LSTM handling time series data well and Adj. close and time having a strong correlation that the model can learn on. Machine learning is a really useful tool to help understand stocks price movement in the past and also make predictions into the future. However, be cautious as ML models can't really predict the future. When it comes to the stock market, its guess may be as good as yours :). </li>
+            <li><strong>Machine Learning Predictions</strong>Using LSTM based models, I was able to pretty acurately predict stock price. Due to the LSTM handling time series data well and Adj. close and time have a strong correlation from which the model can learn. Machine learning is a really useful tool to help understand stocks price movement in the past and also make predictions into the future. However, be cautious as ML models can't really predict the future. When it comes to the stock market, its guess may be as good as yours :) </li>
         </ul>
         <p>Overall, this analysis provides actionable insights into the behavior of Apple’s stock over time, supported by statistical evidence and exploratory trends. Whether you're an investor 
             looking to make more informed decisions or a student of financial markets, understanding these patterns is crucial. Hopefully, this analysis has given you a better insight into Apple stock, 
