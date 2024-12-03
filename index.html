@@ -62,28 +62,36 @@
 
 <body>
     <header>
-        <h1>Fall 2024 Final Data Science Project</h1>
-        <h2>Final Checkpoint</h2>
-        <p>By Varun Kota</p>
+        <h1>Unveiling Stocks: A Data Science Exploration of Apple</h1>
+        <h2>Fall 2024 Data Science Project</h2>
+        <p>All Contributions by Varun Kota</p>
     </header>
 
     <section class="section" id="introduction">
         <h2>Introduction</h2>
-        <p>This project explores Apple Inc. (AAPL) stock data, focusing on key questions and relationships regarding stock
-            price behavior, correlations, and the impact of market events. The analysis aims to provide a deeper understanding 
-            of the relationships between stock prices, volume, and market trends over time. Specifically, we explore how different 
-            Apple stock metrics, such as open price and trading volume (the number of shares traded in a day), are interrelated. 
-            These insights will help readers make more informed decisions not only about Apple stock but also for other stocks with 
-            similar characteristics, such as Amazon or other tech giants. A clear understanding of these relationships is essential for 
-            both novice and experienced investors seeking to understand stock dynamics and identify growth opportunities.</p>
+        <p>My project delves into Apple Inc. (AAPL) stock data, offering a comprehensive, data-driven analysis of its performance over time. My goal is to uncover key insights into stock price behaviors, correlations, and market trends, leveraging statistical and machine learning techniques. These findings are designed to help readers to make better informed decisions, not just about Apple stock, but also about other stocks with similar characteristics, such as Amazon and other tech giants.<p>
+    <p>
+        At the heart of this analysis are two key research questions among others:
+    </p>
+    <ul>
+        <li>
+            How do key metrics such as opening price, closing price, and trading volume correlate with each other, and what do these correlations reveal about Apple’s stock behavior over time?
+        </li>
+        <li>
+            Can machine learning models like LSTMs accurately predict Apple’s stock price based on historical data? If so, what are the limitations of such models in capturing stock price variance?
+        </li>
+    </ul>
+
+
+<p>Whether you're a beginner in investing or have more experience, my aim is to make complex stock data approachable and actionable. As a relatively new investor myself, I understand how daunting the stock market can seem. Breaking it down piece by piece can truly make a difference. By combining data exploration, statistical analysis, and machine learning, I hope to not only present some important trends in Apple’s stock but also inspire you to be comfortable to using technology and modern tools to help you invest with greater confidence! </p>
     </section>
 
     <section class="section" id="data-curation">
         <h2>Data Curation</h2>
-        <p>The data for this analysis was sourced from publicly available historical stock data for Apple Inc. (AAPL) on Kaggle. 
-            The dataset is verified and comprehensive, with records dating back to 1980, allowing for robust trend analysis over 
+        <p>The data for this analysis was sourced from publicly available historical stock data for Apple Inc. (AAPL) on Kaggle Apple Stock Price from 1980-2021 by Meet Nagadia. 
+            The dataset is verified and comprehensive, with records over 40 years of extensive data, allowing for robust trend analysis over 
             different economic cycles and major market events. This depth of historical data helps to ensure that our conclusions 
-            and predictions are grounded in significant evidence and not influenced by short-term noise.</p>
+            and predictions are grounded in significant evidence and not influenced by short term noise.</p>
         <a href="https://www.kaggle.com/datasets/meetnagadia/apple-stock-price-from-19802021/data/">Kaggle Dataset</a>
         <a href="https://colab.research.google.com/drive/17E3oGQ1A15vTnINKlFuGnCHRhbGoPjjN?usp=sharing"> Colab Notebook</a>
         <h3>Imports</h3>
@@ -95,46 +103,94 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM</code></pre>
-        <p>After loading the data, preprocessing steps included:</p>
+<p><strong>Loading and Preprocessing Data</strong><p>
+<pre><code>df = pd.read_csv('AAPL.csv')</code></pre>
+<p>Load the dataset downloaded from Kaggle into a Pandas dataframe</p>
+        <p>Next preprocessing steps include:</p>
         <ul>
-            <li><strong>Converting Dates:</strong> Dates were converted to datetime objects to enable effective temporal analysis and ensure accurate plotting and resampling.</li>
+            <li><strong>Converting Dates:</strong> Dates were converted to standard datetime objects to enable effective analysis and ensure accurate plotting and resampling.</li>
             <li><strong>Ensuring Data Integrity:</strong> We checked for and handled missing values, ensuring no gaps in the data. Data quality is crucial for the reliability of any analysis, and missing values could lead to inaccurate insights.</li>
         </ul>
         <pre><code>df['Date'] = pd.to_datetime(df['Date'])
-print(df.isnull().sum())  # Precheck, no missing values</code></pre>
+print(df.isnull().sum())  # all zeroes, no missing values!</code></pre>
+<p>We are also going to need a new column for the change in stock price day by day known as Daily Return, which will be very useful for seeing the growth prospects of Apple. This can be derived by taking a rolling difference of Adj Close price.</p>
+        <pre><code>df['Daily Return'] = df['Adj Close'].pct_change() #% diff adj close (previous row and current row by default) </code></pre>
+
     </section>
 
-    <section class="section" id="eda">
-        <h2>Exploratory Data Analysis</h2>
-        <p>Key Observations:</p>
-        <ul>
-            <li><strong>Positive Correlation Among Price Metrics:</strong> The opening, high, low, closing, and adjusted closing prices are all highly positively correlated. 
-                This indicates a consistent relationship where, for example, if the stock opens high, it is likely to close high as well. This consistency can be expected, given that 
-                stocks tend to exhibit similar behavior throughout a single trading day, driven by broader market sentiment and investor behavior.</li>
-            <li><strong>Weak Negative Correlation with Volume:</strong> Stock prices showed a weak negative correlation with trading volume. This suggests that, on average, price 
-                movements are not strongly dependent on trading volume. However, significant spikes in volume often correspond to key events—like earnings reports, product launches, or 
-                broader market shocks—which can lead to dramatic price movements. This reinforces the importance of looking at external events to understand sudden changes in volume and price.</li>
-            <li><strong>Daily Returns Analysis:</strong> The distribution of daily returns revolves around zero, with noticeable drops during significant downturns, such as the dot-com 
-                bubble burst. This illustrates the inherent volatility of the stock market, especially during economic crises, and the importance of timing when investing in high-growth tech stocks.</li>
-        </ul>
-    </section>
+   <section class="section" id="analysis">
+    <h2>Exploratory Analysis</h2>
 
-    <section class="section" id="stat analysis">
-        <h2>Statistical Analysis</h2>
-        <p><strong>Statistical Test on Daily Returns:</strong></p>
-        <p>We conducted a one-sample t-test to determine whether the mean daily return is significantly different from zero. This analysis helps assess whether, over time, the stock's 
-            returns tend to be consistently positive or negative, which is a fundamental indicator for long-term investors.</p>
-        <p><strong>Hypotheses:</strong></p>
-        <ul>
-            <li>H<sub>0</sub>: μ = 0 (Mean daily return is equal to zero.)</li>
-            <li>H<sub>a</sub>: μ ≠ 0 (Mean daily return is not equal to zero.)</li>
-        </ul>
-        <p>The results showed that the p-value was less than our alpha level of 0.05, leading us to reject the null hypothesis. This means that the mean daily return is statistically 
-            significantly different from zero. Specifically, the positive returns suggest that Apple stockholders, on average, experience a profit each day. This observation aligns with 
-            Apple's strong historical growth trajectory is supported by its technological leadership, loyal customer base, and consistent innovation since the beginning of the data collection in 1980.</p>
-        <pre><code>_, p_value = stats.ttest_1samp(df['Daily Return'], 0)
+    <h3>Graphical Analysis</h3>
+<p>Plot distribution of Adjusted Close Prices, an important statistic.
+<pre><code>plt.hist(df['Adj Close'], bins=50, edgecolor='black')
+plt.title('Distribution of Adjusted Close Prices')
+plt.xlabel('Adjusted Close Price')
+plt.ylabel('Frequency')
+plt.grid(True)
+plt.show()</code></pre>
+<img src="adjclose.png" alt="adj close price graph">
+<p>        This histogram shows the distribution of Apple’s adjusted close prices over time. Most of the stock prices are 
+        concentrated in the lower range between $0 and $25, with the frequency dropping off as prices increase. 
+        This indicates that Apple’s stock price was much lower for most of the dataset's time period, with only a few occurrences 
+        of higher prices. 
+    </p>
+    <p>
+        The skewed nature of the distribution suggests a historical growth pattern where the stock started at lower prices 
+        and gradually increased over time. This graph highlights Apple’s trajectory as a growth stock, confirming its significant price appreciation over the years. Factors such as Apple’s stock splits and adjustments for dividends contribute to 
+        the clustering of lower prices, as these events reduce the stock price but don't change the overall value of Apple.
+        For long term investors, this visualization underscores the value of early investments in Apple, showcasing how much the stock has grown over its history and how recently it rose to current heights.
+    </p>
+    <p>Correlations Between Stock Metrics</p>
+            <img src="image3.png" alt="correlations between stock metrics as heatmap" width="400" height="350">
+ <p>This heatmap shows the correlations between key stock metrics (Open, High, Low, Close, Volume), providing an intuitive visual representation of how these variables move in relation to one another. For instance, high correlations between opening and closing prices provide evidence of the intraday trend consistency. This consistency can be expected, given that stocks tend to exhibit similar behavior throughout a single trading day, driven by broader market sentiment and investor behavior.</p> <p>On the other hand, trading volume exhibits a weak negative correlation (shown in blue) with these price metrics, indicating that price movements are not strongly influenced by trading volume, though a slight inverse relationship may exist. This suggests that while volume can spike during major market events, it is not a reliable predictor of price changes on its own.</p>
+
+
+    <h3>Statistical Analysis</h3>
+    <p>
+        <strong>Statistical Test on Daily Returns:</strong>  
+        We conducted a one-sample t-test to determine whether the mean daily return is significantly different from zero. This analysis helps assess whether, over time, 
+        the stock's returns tend to be consistently positive or negative, a fundamental indicator for long-term investors.
+    </p>
+    <p>
+        <strong>Hypotheses:</strong>
+    </p>
+    <ul>
+        <li><strong>H<sub>0</sub>:</strong> μ = 0 (Mean daily return is equal to zero.)</li>
+        <li><strong>H<sub>a</sub>:</strong> μ ≠ 0 (Mean daily return is not equal to zero.)</li>
+    </ul>
+    <pre><code>_, p_value = stats.ttest_1samp(df['Daily Return'], 0)
 p_value # 0.0036 < .05, reject H0</code></pre>
-    </section>
+
+    <p>
+        The results showed that the p-value was less than our alpha level of 0.05, leading us to reject the null hypothesis. This means that the mean daily return 
+        is statistically significantly different from zero. Specifically, the positive returns suggest that Apple stockholders, on average, experience a profit each day. 
+        This aligns with Apple's strong historical growth trajectory, supported by its technological leadership, loyal customer base, and consistent innovation.
+    </p>
+    
+    <h3>Exploratory Data Analysis</h3>
+    <p>
+        <strong>Key Observations:</strong>
+    </p>
+    <ul>
+        <li>
+            <strong>Positive Correlation Among Price Metrics:</strong> The opening, high, low, closing, and adjusted closing prices are all highly positively correlated. 
+            This indicates a consistent relationship where, for example, if the stock opens high, it is likely to close high as well. This consistency can be expected, 
+            given that stocks tend to exhibit similar behavior throughout a single trading day, driven by broader market sentiment and investor behavior.
+        </li>
+        <li>
+            <strong>Weak Negative Correlation with Volume:</strong> Stock prices showed a weak negative correlation with trading volume. This suggests that, on average, 
+            price movements are not strongly dependent on trading volume. However, significant spikes in volume often correspond to key events—like earnings reports, 
+            product launches, or broader market shocks—which can lead to dramatic price movements. This reinforces the importance of looking at external events to understand 
+            sudden changes in volume and price.
+        </li>
+        <li>
+            <strong>Daily Returns Analysis:</strong> The distribution of daily returns revolves around zero, with noticeable drops during significant downturns, such as the dot-com 
+            bubble burst. This illustrates the inherent volatility of the stock market, especially during economic crises, and the importance of timing when investing in high-growth tech stocks.
+        </li>
+    </ul>
+</section>
+
     <section class="section" id="machine learning analysis">
         <h2>Machine Learning Analysis</h2>
         <body>
@@ -206,9 +262,6 @@ predictions = scaler.inverse_transform(predictions)</code></pre>
             <li><strong>Trends in Daily Returns Over Time:</strong> This visualization highlights periods of significant growth or decline, offering insights into how the stock responds to 
                 economic events, industry trends, and company-specific news. Observing the peaks and valleys in daily returns can help identify both opportunities for buying low and selling high.</li>
             <img src="image2.png" alt="daily returns" width="500" height="325">
-            <li><strong>Correlations Between Stock Metrics:</strong> A heatmap illustrating correlations between key stock metrics (Open, High, Low, Close, Volume) provides a visual representation 
-                of how these variables move in relation to one another. For instance, high correlations between opening and closing prices provide evidence of the intra-day trend consistency mentioned earlier.</li>
-            <img src="image3.png" alt="correlations between stock metrics" width="400" height="350">
             <li><strong> Historical Performance of Apple Stock:</strong> The long-term performance chart of Apple stock reveals the broader growth trends and the impact of major market crashes, 
                 such as the 2008 financial crisis or the more recent COVID-19 pandemic. These trends help in understanding Apple's resilience and its recovery trajectory following economic downturns. Zooming out, Apple's stock price growth appears to be exponential.</li>
             <img src="image1.png" alt="impact of market crashes on stock behavior" width="500" height="400">
