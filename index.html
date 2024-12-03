@@ -85,6 +85,7 @@
             different economic cycles and major market events. This depth of historical data helps to ensure that our conclusions 
             and predictions are grounded in significant evidence and not influenced by short-term noise.</p>
         <a href="https://www.kaggle.com/datasets/meetnagadia/apple-stock-price-from-19802021/data/">Kaggle Dataset</a>
+        <a href="https://colab.research.google.com/drive/17E3oGQ1A15vTnINKlFuGnCHRhbGoPjjN?usp=sharing"> Colab Notebook</a>
         <h3>Imports</h3>
         <pre><code>import pandas as pd
 import matplotlib.pyplot as plt
@@ -130,7 +131,7 @@ print(df.isnull().sum())  # Precheck, no missing values</code></pre>
         </ul>
         <p>The results showed that the p-value was less than our alpha level of 0.05, leading us to reject the null hypothesis. This means that the mean daily return is statistically 
             significantly different from zero. Specifically, the positive returns suggest that Apple stockholders, on average, experience a profit each day. This observation aligns with 
-            Apple's strong historical growth trajectory, is supported by its technological leadership, loyal customer base, and consistent innovation since the beginning of the data collection in 1980.</p>
+            Apple's strong historical growth trajectory is supported by its technological leadership, loyal customer base, and consistent innovation since the beginning of the data collection in 1980.</p>
         <pre><code>_, p_value = stats.ttest_1samp(df['Daily Return'], 0)
 p_value # 0.0036 < .05, reject H0</code></pre>
     </section>
