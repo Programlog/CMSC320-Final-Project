@@ -89,7 +89,11 @@
         <pre><code>import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy import stats</code></pre>
+from scipy import stats
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, LSTM</code></pre>
         <p>After loading the data, preprocessing steps included:</p>
         <ul>
             <li><strong>Converting Dates:</strong> Dates were converted to datetime objects to enable effective temporal analysis and ensure accurate plotting and resampling.</li>
