@@ -141,10 +141,34 @@ plt.show()</code></pre>
         the clustering of lower prices, as these events reduce the stock price but don't change the overall value of Apple.
         For long term investors, this visualization underscores the value of early investments in Apple, showcasing how much the stock has grown over its history and how recently it rose to current heights.
     </p>
-    <p>Correlations Between Stock Metrics</p>
+    <p><strong>Correlations Between Stock Metrics</strong></p>
+<pre><code>corr = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']].corr()
+sns.heatmap(corr, annot=True, cmap='coolwarm', linewidths=0.5)
+plt.title('Correlation Heatmap of Stock features')
+plt.show()</code></pre>
             <img src="image3.png" alt="correlations between stock metrics as heatmap" width="400" height="350">
  <p>This heatmap shows the correlations between key stock metrics (Open, High, Low, Close, Volume), providing an intuitive visual representation of how these variables move in relation to one another. For instance, high correlations between opening and closing prices provide evidence of the intraday trend consistency. This consistency can be expected, given that stocks tend to exhibit similar behavior throughout a single trading day, driven by broader market sentiment and investor behavior.</p> <p>On the other hand, trading volume exhibits a weak negative correlation (shown in blue) with these price metrics, indicating that price movements are not strongly influenced by trading volume, though a slight inverse relationship may exist. This suggests that while volume can spike during major market events, it is not a reliable predictor of price changes on its own.</p>
 
+<p><strong>Time series graph of daily returns and outliers</strong></p>
+<pre><code>daily_return_cleaned = df['Daily Return'].dropna().reset_index(drop=True)
+z_scores = stats.zscore(daily_return_cleaned)
+
+outliers = daily_return_cleaned[abs(z_scores) > 3] # data points with a z score greater than +- 3 can be considered outlier
+
+plt.figure(figsize=(10, 6))
+plt.plot(df['Date'][1:].reset_index(drop=True), daily_return_cleaned, label='Daily Returns')
+plt.scatter(df['Date'][1:].reset_index(drop=True)[abs(z_scores) > 3], outliers, color='red', label='Outliers')
+plt.title('Daily Returns with Outliers Highlighted')
+plt.xlabel('Date')
+plt.ylabel('Daily Return')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+len(outliers) / len(daily_return_cleaned) # 0.012611 approx 1.26%</code></pre>
+            <img src="image2.png" alt="daily returns" width="500" height="325">
+
+<p> This time series plot of Apple’s daily stock returns, with significant outliers (discovered with z-score) marked in red. These outliers represent extreme deviations from the norm, often associated with major market events such as the dot-com bubble burst in 2000, the 2008 financial crisis, and recently the COVID-19 pandemic in 2020. The majority of daily returns cluster around zero, demonstrating the relative stability of Apple’s stock over time. Observing the peaks and valleys in daily returns can help identify both opportunities for buying low and selling high. These are great opportunities to make money, but its also easy to lose money. Understanding these outliers can help you as investors anticipate potential risks and opportunities tied to economic news or company specific news.</p>
 
     <h3>Statistical Analysis</h3>
     <p>
@@ -167,29 +191,7 @@ p_value # 0.0036 < .05, reject H0</code></pre>
         is statistically significantly different from zero. Specifically, the positive returns suggest that Apple stockholders, on average, experience a profit each day. 
         This aligns with Apple's strong historical growth trajectory, supported by its technological leadership, loyal customer base, and consistent innovation.
     </p>
-    
-    <h3>Exploratory Data Analysis</h3>
-    <p>
-        <strong>Key Observations:</strong>
-    </p>
-    <ul>
-        <li>
-            <strong>Positive Correlation Among Price Metrics:</strong> The opening, high, low, closing, and adjusted closing prices are all highly positively correlated. 
-            This indicates a consistent relationship where, for example, if the stock opens high, it is likely to close high as well. This consistency can be expected, 
-            given that stocks tend to exhibit similar behavior throughout a single trading day, driven by broader market sentiment and investor behavior.
-        </li>
-        <li>
-            <strong>Weak Negative Correlation with Volume:</strong> Stock prices showed a weak negative correlation with trading volume. This suggests that, on average, 
-            price movements are not strongly dependent on trading volume. However, significant spikes in volume often correspond to key events—like earnings reports, 
-            product launches, or broader market shocks—which can lead to dramatic price movements. This reinforces the importance of looking at external events to understand 
-            sudden changes in volume and price.
-        </li>
-        <li>
-            <strong>Daily Returns Analysis:</strong> The distribution of daily returns revolves around zero, with noticeable drops during significant downturns, such as the dot-com 
-            bubble burst. This illustrates the inherent volatility of the stock market, especially during economic crises, and the importance of timing when investing in high-growth tech stocks.
-        </li>
-    </ul>
-</section>
+ </section>
 
     <section class="section" id="machine learning analysis">
         <h2>Machine Learning Analysis</h2>
@@ -259,9 +261,6 @@ predictions = scaler.inverse_transform(predictions)</code></pre>
         <h2>More Visualizations</h2>
         <p>Visualizations provide a deeper understanding of the stock's performance over time and the relationships between different metrics:</p>
         <ul>
-            <li><strong>Trends in Daily Returns Over Time:</strong> This visualization highlights periods of significant growth or decline, offering insights into how the stock responds to 
-                economic events, industry trends, and company-specific news. Observing the peaks and valleys in daily returns can help identify both opportunities for buying low and selling high.</li>
-            <img src="image2.png" alt="daily returns" width="500" height="325">
             <li><strong> Historical Performance of Apple Stock:</strong> The long-term performance chart of Apple stock reveals the broader growth trends and the impact of major market crashes, 
                 such as the 2008 financial crisis or the more recent COVID-19 pandemic. These trends help in understanding Apple's resilience and its recovery trajectory following economic downturns. Zooming out, Apple's stock price growth appears to be exponential.</li>
             <img src="image1.png" alt="impact of market crashes on stock behavior" width="500" height="400">
