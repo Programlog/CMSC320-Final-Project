@@ -1,121 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fall 2024 Data Science Project</title>
+    <title>Fall 2024 Final Data Science Project</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            margin: 20px; 
-            background-color: #f9f9f9; 
-            color: #333; 
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f9f9f9;
+            color: #333;
         }
-        h1, h2, h3 { 
-            color: #333; 
+
+        h1,
+        h2,
+        h3 {
+            color: #333;
         }
-        header { 
-            background: #4CAF50; 
-            color: white; 
-            padding: 10px 15px; 
-            border-radius: 8px; 
+
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
         }
-        code { 
-            background: #f4f4f4; 
-            padding: 2px 4px; 
-            border-radius: 4px; 
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
         }
-        pre { 
-            background: #f4f4f4; 
-            padding: 10px; 
-            border-radius: 5px; 
-            overflow-x: auto; 
-            white-space: pre-wrap; 
-            word-wrap: break-word; 
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
-        .section { 
-            margin-bottom: 30px; 
-            padding: 15px; 
-            background: white; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        ul { 
-            padding-left: 20px; 
+
+        ul {
+            padding-left: 20px;
         }
-        li { 
-            margin-bottom: 10px; 
+
+        li {
+            margin-bottom: 10px;
         }
     </style>
 </head>
+
 <body>
     <header>
-        <h1>Fall 2024 Data Science Project</h1>
-        <h2>Contributions</h2>
-        <p>Final checkpoint: Varun Kota</p>
+        <h1>Fall 2024 Final Data Science Project</h1>
+        <h2>Final Checkpoint</h2>
+        <p>By Varun Kota</p>
     </header>
 
     <section class="section" id="introduction">
         <h2>Introduction</h2>
-        <p>This project explores Apple Inc. (AAPL) stock data, focusing on key questions regarding stock price behavior, correlations, and market events' impact. The analysis aims to provide insights into the relationships between stock prices, volume, and market trends over time.</p>
+        <p>This project explores Apple Inc. (AAPL) stock data, focusing on key questions and relationships regarding stock
+            price behavior, correlations, and the impact of market events. The analysis aims to provide a deeper understanding 
+            of the relationships between stock prices, volume, and market trends over time. Specifically, we explore how different 
+            Apple stock metrics, such as open price and trading volume (the number of shares traded in a day), are interrelated. 
+            These insights will help readers make more informed decisions not only about Apple stock but also for other stocks with 
+            similar characteristics, such as Amazon or other tech giants. A clear understanding of these relationships is essential for 
+            both novice and experienced investors seeking to understand stock dynamics and identify growth opportunities.</p>
     </section>
 
     <section class="section" id="data-curation">
         <h2>Data Curation</h2>
-        <p>Data was sourced from publicly available historical stock data for Apple Inc. (AAPL).</p>
-        <pre><code>file_path = 'AAPL.csv'
-df = pd.read_csv(file_path)</code></pre>
+        <p>The data for this analysis was sourced from publicly available historical stock data for Apple Inc. (AAPL) on Kaggle. 
+            The dataset is verified and comprehensive, with records dating back to 1980, allowing for robust trend analysis over 
+            different economic cycles and major market events. This depth of historical data helps to ensure that our conclusions 
+            and predictions are grounded in significant evidence and not influenced by short-term noise.</p>
+        <a href="https://www.kaggle.com/datasets/meetnagadia/apple-stock-price-from-19802021/data/">Kaggle Dataset</a>
+        <h3>Imports</h3>
+        <pre><code>import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats</code></pre>
         <p>After loading the data, preprocessing steps included:</p>
         <ul>
-            <li>Converting dates to datetime objects for temporal analysis.</li>
-            <li>Ensuring no missing values in the dataset.</li>
+            <li><strong>Converting Dates:</strong> Dates were converted to datetime objects to enable effective temporal analysis and ensure accurate plotting and resampling.</li>
+            <li><strong>Ensuring Data Integrity:</strong> We checked for and handled missing values, ensuring no gaps in the data. Data quality is crucial for the reliability of any analysis, and missing values could lead to inaccurate insights.</li>
         </ul>
         <pre><code>df['Date'] = pd.to_datetime(df['Date'])
 print(df.isnull().sum())  # Precheck, no missing values</code></pre>
     </section>
 
     <section class="section" id="eda">
-        <h2>Exploratory Data Analysis (EDA)</h2>
+        <h2>Exploratory Data Analysis</h2>
         <p>Key Observations:</p>
         <ul>
-            <li><strong>Positive Correlation Among Price Metrics:</strong> Open, High, Low, Close, and Adjusted Close prices are all very strongly positively correlated. For example, a high opening price generally corresponds to a high closing price, which makes intuitive sense.</li>
-            <li><strong>Weak Negative Correlation with Volume:</strong> Prices are weakly negatively correlated with volume, indicating that price movements are not directly tied to trading volume. However, high-volume trading days often accompany significant events, such as earnings announcements or market crashes.</li>
-            <li><strong>Daily Returns Analysis:</strong> Daily returns show variability around 0, with significant drops during market downturns, such as the dot-com crash.</li>
+            <li><strong>Positive Correlation Among Price Metrics:</strong> The opening, high, low, closing, and adjusted closing prices are all highly positively correlated. 
+                This indicates a consistent relationship where, for example, if the stock opens high, it is likely to close high as well. This consistency can be expected, given that 
+                stocks tend to exhibit similar behavior throughout a single trading day, driven by broader market sentiment and investor behavior.</li>
+            <li><strong>Weak Negative Correlation with Volume:</strong> Stock prices showed a weak negative correlation with trading volume. This suggests that, on average, price 
+                movements are not strongly dependent on trading volume. However, significant spikes in volume often correspond to key events—like earnings reports, product launches, or 
+                broader market shocks—which can lead to dramatic price movements. This reinforces the importance of looking at external events to understand sudden changes in volume and price.</li>
+            <li><strong>Daily Returns Analysis:</strong> The distribution of daily returns revolves around zero, with noticeable drops during significant downturns, such as the dot-com 
+                bubble burst. This illustrates the inherent volatility of the stock market, especially during economic crises, and the importance of timing when investing in high-growth tech stocks.</li>
         </ul>
     </section>
 
-    <section class="section" id="analysis">
-        <h2>Primary Analysis</h2>
+    <section class="section" id="stat analysis">
+        <h2>Statistical Analysis</h2>
         <p><strong>Statistical Test on Daily Returns:</strong></p>
-        <p>A one-sample t-test was conducted to determine whether the mean daily return is significantly different from zero.</p>
+        <p>We conducted a one-sample t-test to determine whether the mean daily return is significantly different from zero. This analysis helps assess whether, over time, the stock's 
+            returns tend to be consistently positive or negative, which is a fundamental indicator for long-term investors.</p>
         <p><strong>Hypotheses:</strong></p>
         <ul>
             <li>H<sub>0</sub>: μ = 0 (Mean daily return is equal to zero.)</li>
             <li>H<sub>a</sub>: μ ≠ 0 (Mean daily return is not equal to zero.)</li>
         </ul>
-        <p>Results showed that the p-value was less than 0.05, leading to the rejection of the null hypothesis. This indicates that the mean daily return is significantly different from zero, suggesting consistent stock movement over time. This aligns with Apple stock's historical growth, which has increased tens of thousands of percent since 1980.</p>
+        <p>The results showed that the p-value was less than our alpha level of 0.05, leading us to reject the null hypothesis. This means that the mean daily return is statistically 
+            significantly different from zero. Specifically, the positive returns suggest that Apple stockholders, on average, experience a profit each day. This observation aligns with 
+            Apple's strong historical growth trajectory, supported by its technological leadership, loyal customer base, and consistent innovation since the beginning of the data collection in 1980.</p>
+        <pre><code>_, p_value = stats.ttest_1samp(df['Daily Return'], 0)
+p_value # 0.0036 < .05, reject H0</code></pre>
+    </section>
+    <section class="section" id="machine learning analysis">
+        <h2>Machine Learning Analysis</h2>
+        <body>
+            <h3>1. Data Preparation</h1>
+            <p>The adjusted closing price, which is the target variable for our prediction.</p>
+            <pre><code>adj_close = df[['Adj Close']]</code></pre>
+            <p><strong>Preprocessing Data:</strong></p>
+            <pre><code>scaler = MinMaxScaler(feature_range=(0, 1))
+scaled_data = scaler.fit_transform(adj_close)</code></pre>
+            <p>The fit_transform method is used to fit the scaler to the adj_close data and then transform it to the scaled values.</p>
+            <pre><code>train_data_len = int(np.ceil(len(scaled_data) * 0.8))
+                train_data = scaled_data[0:train_data_len, :] </code></pre>
+            <p>Calculates and selects the first 80% of the scaled data (adj. close) for training.</p>
+            <h3>2. Creating Training Data</h2>
+            <pre><code>X_train = []
+y_train = []</code></pre>
+            <p><strong>X_train, y_train</strong> lists will store the input features and target values for the training data, respectively.</p>
+            <pre><code>for i in range(60, len(train_data)):
+        X_train.append(train_data[i-60:i, 0])
+        y_train.append(train_data[i, 0])</code></pre>
+            <p>The for loop iterates through the training data, creating data points for the model:</p>
+            <ul>
+                <li><strong>X_train</strong> holds the previous 60 days adjusted closing prices, essentially using a 60 day window as input to the LSTM model.</li>
+                <li><strong>y_train</strong> holds the adjusted closing price of the current day, which is the value the model will try to predict.</li>
+            </ul>
+            <pre><code>X_train, y_train = np.array(X_train), np.array(y_train)
+X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))</code></pre>
+            <p>The <code>X_train</code> and <code>y_train</code> lists are then converted into NumPy arrays. <code>X_train</code> is reshaped to a 3D array, because it will be fed into the LSTM model (samples, timesteps, features).</p>
+            <h3>3. Building and Training the Model</h2>
+            <pre><code>model = Sequential()
+model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
+model.add(LSTM(units=50, return_sequences=False))
+model.add(Dense(units=25))
+model.add(Dense(units=1))</code></pre>
+            <p>Here, we create a keras model and add two LSTM layers to the model, with 50 units each. I chose LSTMs here because they work well with sequential data like time series such as this one.</p>
+            <pre><code>model.compile(optimizer='adam', loss='mean_squared_error')</code></pre>
+            <p>Make the model for training using the very popular and versatile adam optimizer and mean squared error as the loss function that we learned in class.</p>
+            <pre><code>model.fit(X_train, y_train, batch_size=1, epochs=3)</code></pre>
+            <p>Trains the model on the training data (<code>X_train</code>, <code>y_train</code>) for 3 epochs. The number of epochs is pretty arbitrary. I chose 3 epochs as it is a balance of accuracy and compute efficiency without overly underfitting or overfitting. With more time, I would fine tune this. On the other hand, batch size is more particular. I chose a batch size of 1 because time series data can change dramatically. Specifically, Apple stock price can have sudden movements based on earnings or company news. Smaller batch sizes allow this model to adapt more quickly to new information. Again, more fine tuning can be done here.</p>
+
+            <h3>4. Testing</h2>
+            <pre><code>test_data = scaled_data[train_data_len - 60:, :] </code></pre>
+            <p><strong>Testing Split:</strong> Gets the data after the training set for testing.</p>
+            <pre><code>X_test = []
+y_test = adj_close[train_data_len:].values</code></pre>
+            <p><strong>X_test, y_test:</strong> These lists will hold the input features and adj close series for the testing data, respectively.</p>
+            <pre><code>for i in range(60, len(test_data)):
+    X_test.append(test_data[i-60:i, 0])
+    
+    X_test = np.array(X_test)
+    X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+</code></pre>
+            <p>Similar to what we did in the above sections, just for testing.</p>
+            <pre><code>predictions = model.predict(X_test)
+predictions = scaler.inverse_transform(predictions)</code></pre>
+            <p><strong>predictions:</strong> We use our trained LSTM model to make predictions on the test data. The output is the predicted adjusted closing prices, but they are still in the scaled range (0 to 1). To get the actual predictions back in the original scale, the inverse_transform is applied.</p>
+
+            <h3>5. Visualization</h2>
+            <img src="modelprediction2.png" alt="stock price predictions" width="500" height="325">
+              <p>Finally, lets see the results. Our model is trained on the Apple stock data to predict future Apple stock prices. This visualization of the testing set results, shows the actual stock price over time, alongside our model's predictions. Looking at the graph, it looks like our model was pretty sucessful! When the stock variance was lower, it appears our model peformed better but as it increased, our model consistenyl undershot the actual price. Some potential causes of this could be the fact our model is trained on data from 1980-2014. Not only is the stock market a very different place it was 10-40 years, but also Apple's price was also much lower. This might have been partially solved by the minmaxscaler but perhaps an alternative scaler would be better suited. It would require more testing and finetuning.
+    <p>However, the prediction still captured much of the trends pretty accurately. This could be a useful first tool for newbie investors to use to make informed investment decisions.</p>
+        </body>
     </section>
 
     <section class="section" id="visualizations">
-        <h2>Visualizations</h2>
-        <p>Visualizations reveal:</p>
+        <h2>More Visualizations</h2>
+        <p>Visualizations provide a deeper understanding of the stock's performance over time and the relationships between different metrics:</p>
         <ul>
-            <li>Trends in daily returns over time.</li>
-            <li>Impact of market crashes on stock behavior.</li>
+            <li><strong>Trends in Daily Returns Over Time:</strong> This visualization highlights periods of significant growth or decline, offering insights into how the stock responds to 
+                economic events, industry trends, and company-specific news. Observing the peaks and valleys in daily returns can help identify both opportunities for buying low and selling high.</li>
+            <img src="image2.png" alt="daily returns" width="500" height="325">
+            <li><strong>Correlations Between Stock Metrics:</strong> A heatmap illustrating correlations between key stock metrics (Open, High, Low, Close, Volume) provides a visual representation 
+                of how these variables move in relation to one another. For instance, high correlations between opening and closing prices provide evidence of the intra-day trend consistency mentioned earlier.</li>
+            <img src="image3.png" alt="correlations between stock metrics" width="400" height="350">
+            <li><strong>Historic Performance of Apple Stock:</strong> The long-term performance chart of Apple stock reveals the broader growth trends and the impact of major market crashes, 
+                such as the 2008 financial crisis or the more recent COVID-19 pandemic. These trends help in understanding Apple's resilience and its recovery trajectory following economic downturns. Zooming out, Apple's stock price growth appears to be exponential.</li>
+            <img src="image1.png" alt="impact of market crashes on stock behavior" width="500" height="400">
         </ul>
-        <p>[Add generated visualizations here]</p>
     </section>
+
 
     <section class="section" id="insights">
         <h2>Insights & Conclusions</h2>
-        <p>From this analysis, key insights include:</p>
         <ul>
-            <li>Stock prices are highly correlated, reflecting the interconnected nature of opening, closing, and intraday prices.</li>
-            <li>Daily returns are significantly different from zero, implying long-term upward momentum in Apple's stock price.</li>
-            <li>High-volume trading days often coincide with market-moving events, reinforcing the importance of context in stock analysis.</li>
+            <li><strong>Interconnected Stock Metrics:</strong> The high correlation among stock prices (Open, High, Low, Close) reflects the interconnected nature of daily trading dynamics. 
+                This suggests that investors can use one price metric to make inferences about others, which can simplify analysis when making decisions.</li>
+            <li><strong>Long-term Growth Potential:</strong> The finding that daily returns are significantly different from zero implies that Apple’s stock generally follows an upward trajectory 
+                over time. Investors who hold Apple stock for the long term are more likely to experience consistent positive returns, which is supported by the company's growth history and market leadership.</li>
+            <li><strong>Impact of External Events:</strong> High-volume trading days often coincide with significant external events, such as new product announcements or macroeconomic news. 
+                Understanding these patterns can help investors anticipate potential price movements during such events and develop better trading strategies based on context-driven analysis.</li>
+            <li><strong>Machine Learning Predictions</strong>Using LSTM based models, I was able to pretty acurately predict stock price. Due to the LSTM handling time series data well and Adj. close and time having a strong correlation that the model can learn on. Machine learning is a really useful tool to help understand stocks price movement in the past and also make predictions into the future. However, be cautious as ML models can't really predict the future. When it comes to the stock market, its guess may be as good as yours :). </li>
         </ul>
-        <p>Overall, this analysis provides actionable insights into the behavior of Apple’s stock over time, supported by statistical evidence and exploratory trends.</p>
+        <p>Overall, this analysis provides actionable insights into the behavior of Apple’s stock over time, supported by statistical evidence and exploratory trends. Whether you're an investor 
+            looking to make more informed decisions or a student of financial markets, understanding these patterns is crucial. Hopefully, this analysis has given you a better insight into Apple stock, 
+            which can help you make well informed investment decisions in the future.</p>
     </section>
 </body>
+
 </html>
