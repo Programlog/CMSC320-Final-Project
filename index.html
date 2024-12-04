@@ -169,11 +169,12 @@ len(outliers) / len(daily_return_cleaned) # 0.012611 approx 1.26%</code></pre>
             <img src="image2.png" alt="daily returns" width="500" height="325">
 
 <p> This time series plot of Apple’s daily stock returns, with significant outliers (discovered with z-score) marked in red. These outliers represent extreme deviations from the norm, often associated with major market events such as the dot-com bubble burst in 2000, the 2008 financial crisis, and recently the COVID-19 pandemic in 2020. The majority of daily returns cluster around zero, demonstrating the relative stability of Apple’s stock over time. Observing the peaks and valleys in daily returns can help identify both opportunities for buying low and selling high. These are great opportunities to make money, but its also easy to lose money. Understanding these outliers can help you as investors anticipate potential risks and opportunities tied to economic news or company specific news.</p>
+<p>Note: the outliers make up a small part of the overall dataset, 1.26%. This indicates, days of dramatic price returns in AAPL are pretty rare and only happen once every 80 days, on averages.</p>
 
     <h3>Statistical Analysis</h3>
     <p>
         <strong>Statistical Test on Daily Returns:</strong>  
-        We conducted a one-sample t-test to determine whether the mean daily return is significantly different from zero. This analysis helps assess whether, over time, 
+        We conducted a one sided one sample t-test to determine whether the mean daily return is significantly greater than zero. This analysis helps assess whether, over time, 
         the stock's returns tend to be consistently positive or negative, a fundamental indicator for long-term investors.
     </p>
     <p>
@@ -181,20 +182,21 @@ len(outliers) / len(daily_return_cleaned) # 0.012611 approx 1.26%</code></pre>
     </p>
     <ul>
         <li><strong>H<sub>0</sub>:</strong> μ = 0 (Mean daily return is equal to zero.)</li>
-        <li><strong>H<sub>a</sub>:</strong> μ ≠ 0 (Mean daily return is not equal to zero.)</li>
+        <li><strong>H<sub>a</sub>:</strong> μ > 0 (Mean daily return is not equal to zero.)</li>
     </ul>
-    <pre><code>_, p_value = stats.ttest_1samp(df['Daily Return'], 0)
-p_value # 0.0036 < .05, reject H0</code></pre>
+    <pre><code>_, p_value = stats.ttest_1samp(df['Daily Return'].dropna(), 0, alternative='greater')
+p_value # 3.90e-05 < .05, reject H0</code></pre>
 
-    <p>
-        The results showed that the p-value was less than our alpha level of 0.05, leading us to reject the null hypothesis. This means that the mean daily return 
-        is statistically significantly different from zero. Specifically, the positive returns suggest that Apple stockholders, on average, experience a profit each day. 
-        This aligns with Apple's strong historical growth trajectory, supported by its technological leadership, loyal customer base, and consistent innovation.
-    </p>
+    <p>The results showed that the p-value was less than a typical alpha value of 0.05, we have strong evidence to reject the null hypothesis (that the mean daily return is equal to 0). Specifically, the positive returns suggest that Apple stockholders, on average, experience a profit each day. This means there is a statistically significant positive average daily return for Apple's stock from 1980 to 2021. In simpler terms, the stock has tended to go up in value on average during this periods.</p>
+<p>While this is statistically significant, it's important to consider the practical significance as well. A small positive daily return, even if statistically significant, might not be very meaningful in practical terms for an investor, especially considering headwinds like risk and transaction costs. But in this case, as the stock is up tens of thousands of percent since 1980, there is probably some practical significance to the small positive daily return.    </p>
+<p>Overall, this evidence provides a level of confidence to investors that the observed trend is not due to random chance but rather a consistent pattern. Although small, the positive average daily return contributes to positive expected returns over the years. So investors can reasonably anticipate that their investment in AAPL has the potential to grow over the long run but they should be know 'past performance is not a guarantee of future returns'.
+
+ </p>
  </section>
 
     <section class="section" id="machine learning analysis">
-        <h2>Machine Learning Analysis</h2>
+        <h2>Primary analysis</h2>
+<p>In this section, I explore how machine learning can be used to predict Apple’s stock prices. I used a Long Short-Term Memory (LSTM) model, which is great for working with time series data like stock prices because it can identify patterns in sequences. The idea was to see if we could use Apple’s stock price data to make accurate predictions about its future performance. While the results are promising and show the power of machine learning, there are some important limitations to keep in mind after, stock prices are influenced by so many unpredictable factors that it's nearly impossible for any one model to take all of them into account. I'll show what is possible with machine learning in a a fast moving and complex market like this one, and how you can use it on your investing journey.</p>
         <body>
             <h3>1. Data Preparation</h1>
             <p>The adjusted closing price, which is the target variable for our prediction.</p>
@@ -251,20 +253,29 @@ predictions = scaler.inverse_transform(predictions)</code></pre>
             <p><strong>predictions:</strong> We use our trained LSTM model to make predictions on the test data. The output is the predicted adjusted closing prices, but they are still in the scaled range (0 to 1). To get the actual predictions back in the original scale, the inverse_transform is applied.</p>
 
             <h3>5. Visualization</h2>
-            <img src="modelprediction2.png" alt="stock price predictions" width="500" height="325">
-              <p>Finally, let's see the results. Our model is trained on the Apple stock data to predict future Apple stock prices. This visualization of the testing set results, shows the actual stock price over time, alongside our model's predictions. Looking at the graph, it looks like our model was pretty sucessful! When the stock variance was lower, it appears our model peformed better but as it increased, our model consistenyl undershot the actual price. Some potential causes of this could be the fact our model is trained on data from 1980-2014. Not only is the stock market a very different place it was 10-40 years, but also Apple's price was also much lower. This might have been partially solved by the minmaxscaler but perhaps an alternative scaler would be better suited. It would require more testing and finetuning.
-    <p>However, the prediction still captured much of the trends pretty accurately. This could be a useful first tool for newbie investors to use to make informed investment decisions.</p>
+            <img src="modelprediction3.png" alt="stock price predictions" width="500" height="325">
+    <p>
+        Finally after all that work, let’s take a look at the results. Our model, trained on Apple stock data, was tasked with predicting future stock prices. The visualization compares the actual stock prices 
+        over time with the model's predictions, and overall, it seems like the model performed quite well! When the stock price variance was relatively low, the predictions closely followed the actual values. 
+        However, as volatility increased, the model consistently undershot the actual prices.
+    </p>
+    <p>
+        One potential reason for this discrepancy is that the model was trained on data from 1980–2014 but tested on data from 2015–2021. The stock market of the 1980s and early 2000s was vastly different 
+        from the market in recent years, both in terms of trading patterns and the scale of Apple’s stock price. Back then, Apple’s stock price was significantly lower, and the company wasn’t the tech giant 
+        it is today. These changes in market conditions and price dynamics likely impacted the model’s ability to generalize to more recent data.
+    </p>
+    <p>
+        While the MinMaxScaler helped standardize the data, an alternative scaling method could potentially better account for the shifts in stock price magnitude over time. This is something that would require 
+        further testing and fine tuning for me to get right. Additionally, the LSTM model, while effective for time series, might benefit from additional features or external inputs like broader market trends or 
+        economic indicators to better handle periods of high volatility. Feeding it indicators like MACD, RSI, and econmics health along with adj close stock price might help it predict the price with better consistency. 
+    </p>
+    <p>
+        All in all, the results are pretty promising. THe model captures trends well and could serve as a useful tool for gaining insights into stock price movement. But, like any predictive model in the stock market, 
+        it has its limitations. The unpredictability of external events and the constantly evolving market environment are challenges that even the best machine learning models struggle to overcome. Still, this 
+        is a solid starting point for building bigger more accurate models.
+    </p>
+    <p>This could be a useful first tool for beginner investors to use to make informed investment decisions or build upon for their own analysis.</p>
         </body>
-    </section>
-
-    <section class="section" id="visualizations">
-        <h2>More Visualizations</h2>
-        <p>Visualizations provide a deeper understanding of the stock's performance over time and the relationships between different metrics:</p>
-        <ul>
-            <li><strong> Historical Performance of Apple Stock:</strong> The long-term performance chart of Apple stock reveals the broader growth trends and the impact of major market crashes, 
-                such as the 2008 financial crisis or the more recent COVID-19 pandemic. These trends help in understanding Apple's resilience and its recovery trajectory following economic downturns. Zooming out, Apple's stock price growth appears to be exponential.</li>
-            <img src="image1.png" alt="impact of market crashes on stock behavior" width="500" height="400">
-        </ul>
     </section>
 
 
@@ -273,15 +284,16 @@ predictions = scaler.inverse_transform(predictions)</code></pre>
         <ul>
             <li><strong>Interconnected Stock Metrics:</strong> The high correlation among stock prices (Open, High, Low, Close) reflects the interconnected nature of daily trading dynamics. 
                 This suggests that investors can use one price metric to make inferences about others, which can simplify analysis when making decisions.</li>
-            <li><strong>Long-term Growth Potential:</strong> The finding that daily returns are significantly different from zero implies that Apple’s stock generally follows an upward trajectory 
-                over time. Investors who hold Apple stock for the long term are more likely to experience consistent positive returns, which is supported by the company's growth history and market leadership.</li>
-            <li><strong>Impact of External Events:</strong> High-volume trading days often coincide with significant external events, such as new product announcements or macroeconomic news. 
-                Understanding these patterns can help investors anticipate potential price movements during such events and develop better trading strategies based on context-driven analysis.</li>
-            <li><strong>Machine Learning Predictions</strong>Using LSTM based models, I was able to pretty acurately predict stock price. Due to the LSTM handling time series data well and Adj. close and time have a strong correlation from which the model can learn. Machine learning is a really useful tool to help understand stocks price movement in the past and also make predictions into the future. However, be cautious as ML models can't really predict the future. When it comes to the stock market, its guess may be as good as yours :) </li>
+            <li><strong>Long term Growth Potential:</strong> The finding that daily returns are significantly different from zero implies that Apple’s stock generally follows an upward trajectory 
+                over time, confirming what we already suspected. Long term investors have consistently seen positive returns, thanks to Apple’s ability to stay innovative and dominate the tech market. Whether that is the case for the future is the subject of further analysis on more data.</li>
+            <li><strong>Impact of External Events:</strong> Big spikes in trading volume tend to coincide with major events like product launches or big market news. Recognizing this pattern can help you anticipate how the stock might move during similar events in the future. Understanding the context behind market behavior is just as important as the numbers themselves. These moments can be a great opportunity to swing trade and make money during the stock's drastic movements. 
+
+</li>
+            <li><strong>Machine Learning Predictions: </strong>Using LSTM based models, I was able to pretty acurately predict stock price. Due to the LSTM handling time series data well and Adj. close and time have a strong correlation from which the model can learn. Machine learning is a really useful tool to help understand stocks price movement in the past and also make predictions into the future. However, be cautious as ML models are no magic tool, they can't really predict the future. When it comes to the stock market, its guess may be as good as yours. But that doesn't mean we can try and form an educated guess :)</li>
         </ul>
-        <p>Overall, this analysis provides actionable insights into the behavior of Apple’s stock over time, supported by statistical evidence and exploratory trends. Whether you're an investor 
-            looking to make more informed decisions or a student of financial markets, understanding these patterns is crucial. Hopefully, this analysis has given you a better insight into Apple stock, 
-            which can help you make well informed investment decisions in the future.</p>
+        <p>Overall, whether you’re just starting out in investing or you’re someone with a bit more experience, I hope this analysis helped you learn something new about Apple’s stock and stocks in general. If you’re new to this, the project breaks down some of the more complicated aspects of stock analysis into simpler ideas you can apply elsewhere. And if you already knew a thing or two, I hope you found the statistical insights and machine learning exploration at least a bnit interesting.
+
+At the end of the day, the goal is to get your feet wet with finance and stocks. I know stocks can be intimidating, but the more you break them down and look at them from different angles, the more approachable they become. Hopefully, this analysis has given you some idea how to do tackle analyis whether it’s for Apple, Amazon, or any other stock.</p>
     </section>
     
     <section class="section" id="additional-resources">
