@@ -153,7 +153,7 @@ plt.show()</code></pre>
 <pre><code>daily_return_cleaned = df['Daily Return'].dropna().reset_index(drop=True)
 z_scores = stats.zscore(daily_return_cleaned)
 
-outliers = daily_return_cleaned[abs(z_scores) > 3] # data points with a z score greater than +- 3 can be considered outlier
+outliers = daily_return_cleaned[abs(z_scores) > 3] # data points with a z score greater than +- 3 can be considered 
 
 plt.figure(figsize=(10, 6))
 plt.plot(df['Date'][1:].reset_index(drop=True), daily_return_cleaned, label='Daily Returns')
@@ -167,9 +167,56 @@ plt.show()
 
 len(outliers) / len(daily_return_cleaned) # 0.012611 approx 1.26%</code></pre>
             <img src="image2.png" alt="daily returns" width="500" height="325">
-
 <p> This time series plot of Apple’s daily stock returns, with significant outliers (discovered with z-score) marked in red. These outliers represent extreme deviations from the norm, often associated with major market events such as the dot-com bubble burst in 2000, the 2008 financial crisis, and recently the COVID-19 pandemic in 2020. The majority of daily returns cluster around zero, demonstrating the relative stability of Apple’s stock over time. Observing the peaks and valleys in daily returns can help identify both opportunities for buying low and selling high. These are great opportunities to make money, but its also easy to lose money. Understanding these outliers can help you as investors anticipate potential risks and opportunities tied to economic news or company specific news.</p>
 <p>Note: the outliers make up a small part of the overall dataset, 1.26%. This indicates, days of dramatic price returns in AAPL are pretty rare and only happen once every 80 days, on averages.</p>
+
+<p><strong>Annualized Volatality of Apple Stock</strong></p>
+
+<pre><code>df['30_Day_Volatility'] = df['Daily Return'].rolling(window=30).std() * np.sqrt(30) #Annualized volatility
+
+plt.figure(figsize=(10, 6))
+plt.plot(df['Date'], df['30_Day_Volatility'], label='30-Day Volatility')
+plt.title('Apple Stock Volatility')
+plt.xlabel('Date')
+plt.ylabel('Annualized Volatility')
+plt.grid(True)
+plt.legend()
+plt.show()
+</code></pre>
+<img src="volatility.png" alt="volatility" width="500" height="325">
+<p>I created a new column '30_Day_Volatility' that is equal to the annualized standard deviation of the previous 30 day daily return percentage. Essentially representing fluctuations in the daily return on a 30 day rolling basis. Then we multiply by the square root of 30. This step annualizes the volatility and is a common practice in finance. Volatility is often standardized to an annual basis to make comparisons across different time periods easier.</p>
+<p>Plotting this newly created column against the 'Date' column highlights how the volatility of Apple stock has changed over time. 
+
+In finance, volatility is a measure of uncertainty, with higher values indicating more unpredictable price swings and lower values meaning more stability. The graph reveals several spikes in volatility, particularly during major market events such as the 1987 Black Monday crash, the dot-com bubble burst in 2000, the 2008 global financial crisis, and the COVID-19 pandemic in 2020. These spikes are moments of heightened uncertainty in the stock market, where Apple’s stock experienced sharp and unpredictable price movements. This is actually aligns with the daily returns graph. The spikes on both graphs align and this makes intuitive sense because as the stock fluctuates more in a day, its price is more uncertain and unpredictable. For instance, on earnings day, it's hard to predict Apple stock movement but the price fluctuates more than usual.</p>
+
+</p>Between these volatility spikes, there is a clear downward trend, especially from 2000 to 2020. This decline suggests that as Apple is a much more stable and mature company than it was many years ago. Apple grew into a global market leader with strong financial fundamentals and a more mature business model. However, the recent spike in volatility during the COVID-19 pandemic reminds us that even blue chip companies like Apple are not immune to economic disruptions. While volatility has decreased since the pandemic’s peak, it remains slightly elevated compared to the pre-covid relative calm.</p>
+<p>Lets dive deeper into the volatility</p>
+
+<pre><code>scaled_returns = df['Daily Return'].dropna() * 100
+
+garch_model = arch_model(scaled_returns, vol='Garch', p=1, q=1)
+garch_fit = garch_model.fit()
+
+print(garch_fit.summary())</code></pre>
+
+<p>To analyze volatility further, I applied GARCH. GARCH is very popular in the world of finance, particularly when working with volaitility data. The first line preprocesses the daily return column-- I multiply by 100 to represent percentages. Then, I created a garch model, passing in the newly created column, p, and q. p and q seem random but they actually represent how many previous variance and residual values (respectively) should be used to calculate the next variance. p and q are usually set to 1 because it reduces overfitting and are efficient on large dataset. Increasing p and q may minutuly increase the accuracy but at the cost of taking a lot more time.</p>
+<p>Next, we fit/train the model to 'scaled returns' and estimate the parameters. Finally, we print the results</p>
+
+<img src="result.png" alt="results" width="500" height="400">
+
+<p>First thing to notice, is the model ran the optimizer 13 times before believing to find the best fit. Also notice, the  Neg. LLF is decreasing, indicating the model is learning and finding better parameters to fit the data. In the last few iterations, Neg. LLF stops decreasing, which means the model has converged. When a model reaches convergence it generally can't further improve it's parameters and performance in a siginificant way.</p>
+<p>Looking at the actual results, the constant mean is 0.1822 with a very small standard error (0.02472), resulting in a highly significant t-value (7.37, p < 0.001). This indicates that the average daily percent return, is small but statistically significant, suggesting Apple’s stock generally has a slightly positive daily return. This aligns with Apple's historical stock price and our one sided t test from before. 
+</p>
+
+    <p>
+        In financial markets, <strong>shocks</strong> are sudden, unexpected price changes driven by events such as major news, earnings surprises, or economic announcements. 
+        In the GARCH model, shocks are accounted for when analyzing volatility.
+    </p>
+    <p>
+        In the GARCH model results, the <code>alpha[1]</code> coefficient (0.0653) indicates that shocks have a small but statistically significant effect on Apple’s volatility, 
+        causing the short term spikes in volatility we saw above. However, the <code>beta[1]</code> coefficient (0.9322) highlights that volatility is highly persistent, meaning past volatility has a much stronger 
+        and longer lasting influence. Basically, this means Apple’s stock volatility is mostly driven by historical patterns. Shocks can create brief price deviations but they generally fade away. For Apple investors, it means periods of calm or turbulence tend to last, providing predictability in volatility patterns. Understanding the nuances of stocks such as this can help an investor gain a competitive advantage in making decisions about their portfolio positions. Apple investors can typically not worry about short term, shock volatility knowing the stock will continue its long term trend when its all said and done.
+
 
     <h3>Statistical Analysis</h3>
     <p>
@@ -189,9 +236,7 @@ p_value # 3.90e-05 < .05, reject H0</code></pre>
 
     <p>The results showed that the p-value was less than a typical alpha value of 0.05, we have strong evidence to reject the null hypothesis (that the mean daily return is equal to 0). Specifically, the positive returns suggest that Apple stockholders, on average, experience a profit each day. This means there is a statistically significant positive average daily return for Apple's stock from 1980 to 2021. In simpler terms, the stock has tended to go up in value on average during this periods.</p>
 <p>While this is statistically significant, it's important to consider the practical significance as well. A small positive daily return, even if statistically significant, might not be very meaningful in practical terms for an investor, especially considering headwinds like risk and transaction costs. But in this case, as the stock is up tens of thousands of percent since 1980, there is probably some practical significance to the small positive daily return.    </p>
-<p>Overall, this evidence provides a level of confidence to investors that the observed trend is not due to random chance but rather a consistent pattern. Although small, the positive average daily return contributes to positive expected returns over the years. So investors can reasonably anticipate that their investment in AAPL has the potential to grow over the long run but they should be know 'past performance is not a guarantee of future returns'.
-
- </p>
+<p>Overall, this evidence provides a level of confidence to investors that the observed trend is not due to random chance but rather a consistent pattern. Although small, the positive average daily return contributes to positive expected returns over the years. So investors can reasonably anticipate that their investment in AAPL has the potential to grow over the long run but they should be know 'past performance is not a guarantee of future returns'.</p>
  </section>
 
     <section class="section" id="machine learning analysis">
