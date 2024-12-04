@@ -232,8 +232,8 @@ model.add(Dense(units=1))</code></pre>
             <p>Here, we create a keras model and add two LSTM layers to the model, with 50 units each. I chose LSTMs here because they work well with sequential data like time series such as this one.</p>
             <pre><code>model.compile(optimizer='adam', loss='mean_squared_error')</code></pre>
             <p>Make the model for training using the very popular and versatile Adam optimizer and mean squared error as the loss function we learned in class.</p>
-            <pre><code>model.fit(X_train, y_train, batch_size=1, epochs=3)</code></pre>
-            <p>Trains the model on the training data (<code>X_train</code>, <code>y_train</code>) for 3 epochs. The number of epochs is pretty arbitrary. I chose 3 epochs as it is a balance of accuracy and compute efficiency without overly underfitting or overfitting. With more time, I would fine tune this. On the other hand, batch size is more particular. I chose a batch size of 1 because time series data can change dramatically. Specifically, Apple stock price can have sudden movements based on earnings or company news. Smaller batch sizes allow this model to adapt more quickly to new information. Again, more fine tuning can be done here.</p>
+            <pre><code>model.fit(X_train, y_train, batch_size=5, epochs=25)</code></pre>
+            <p>Trains the model on the training data (<code>X_train</code>, <code>y_train</code>) for 25 epochs. I chose to train over 25 epochs because I noticed the training loss of the model stagnated after epoch 25, so I stopped there to avoid overfitting. Also, I used a batch size of 5, representing a typical trading week (5 days). I didn't want my batch size to be too small as it may overfit to the noise in the data. Apple stock price can have sudden movements based on earnings or even random movements. Too big a batch size, and the model would fail to learn anything much from the nuances in the data.</p>
 
             <h3>4. Testing</h2>
             <pre><code>test_data = scaled_data[train_data_len - 60:, :] </code></pre>
